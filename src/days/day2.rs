@@ -26,22 +26,22 @@ pub fn get_res(path: &str) -> (i32, i32) {
         count.1 += 1;
         let mut failsafe = true;
 
-        let mut i = 1;
-        'w: while i < c.len() {
+        for mut i in 1..c.len() - 1 {
             let o1 = c[1].cmp(&c[0]);
             let abs = (c[i] - c[i - 1]).abs();
-            println!("{:?} {:?} {abs} {failsafe}", c[i].cmp(&c[i - 1]), o1);
 
-            if c[i].cmp(&c[i - 1]) != o1 || abs > 3 || abs == 0 {
-                if failsafe == true {
-                    failsafe = false;
-                    c.remove(i);
-                    continue;
-                }
-                count.1 -= 1;
-                break 'w;
+            if c[i].cmp(&c[i - 1]) == o1 && abs <= 3 && abs > 0 {
+                continue;
             }
-            i += 1;
+
+            if failsafe {
+                failsafe = false;
+                c.remove(i);
+                continue;
+            }
+
+            count.1 -= 1;
+            break;
         }
     }
     count
