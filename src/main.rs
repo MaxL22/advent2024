@@ -12,4 +12,8 @@ fn main() {
     let path = "src/inputs/i3";
     let r = days::day3::get_res(path);
     println!("{:?}", r);
+
+    let path = "src/inputs/i4";
+    let r = days::day4::get_res(path);
+    println!("{:?}", r);
 }
