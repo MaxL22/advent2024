@@ -15,10 +15,10 @@ fn dir_update(direction: Direction, coord: &mut (i32, i32), forward: bool) {
     }
 
     match direction {
-        Direction::Up => sc.0 += 1,
-        Direction::Down => sc.0 -= 1,
-        Direction::Right => sc.1 += 1,
-        Direction::Left => sc.1 -= 1,
+        Direction::Up => coord.0 += val,
+        Direction::Down => coord.0 -= val,
+        Direction::Right => coord.1 += val,
+        Direction::Left => coord.1 -= val,
     }
 }
 
@@ -57,24 +57,14 @@ pub fn get_res(path: &str) -> (i32, i32) {
             '#' => {
                 direction = (direction as usize + 1) % 4;
                 //Go back 1
-                match direction {
-                    Direction::Up => sc.0 -= 1,
-                    Direction::Down => sc.0 += 1,
-                    Direction::Right => sc.1 -= 1,
-                    Direction::Left => sc.1 += 1,
-                }
+                dir_update(direction, &mut sc, false);
             }
             // Forward, but already seen
             'X' => {}
         }
 
         //Next step
-        match direction {
-            Direction::Up => sc.0 += 1,
-            Direction::Down => sc.0 -= 1,
-            Direction::Right => sc.1 += 1,
-            Direction::Left => sc.1 -= 1,
-        }
+        dir_update(direction, &mut sc, a);
 
         break 'outer;
     }
