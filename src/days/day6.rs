@@ -1,8 +1,25 @@
 enum Direction {
-    Up,
+    Up = 0,
+    Right,
     Down,
     Left,
-    Right,
+}
+
+fn dir_update(direction: Direction, coord: &mut (i32, i32), forward: bool) {
+    let val;
+
+    if forward {
+        val = 1
+    } else {
+        val = -1
+    }
+
+    match direction {
+        Direction::Up => sc.0 += 1,
+        Direction::Down => sc.0 -= 1,
+        Direction::Right => sc.1 += 1,
+        Direction::Left => sc.1 -= 1,
+    }
 }
 
 pub fn get_res(path: &str) -> (i32, i32) {
@@ -30,22 +47,34 @@ pub fn get_res(path: &str) -> (i32, i32) {
 
     //Part 1
     'outer: loop {
-        match direction {
-            Direction::Up => {
-                sc.0 += 1;
+        match map[sc.0][sc.1] {
+            //Go forward
+            '.' => {
+                count.0 += 1;
+                map[sc.0][sc.1] = 'X';
             }
-            Direction::Down => {
-                sc.0 -= 1;
+            //There's an obstacle
+            '#' => {
+                direction = (direction as usize + 1) % 4;
+                //Go back 1
+                match direction {
+                    Direction::Up => sc.0 -= 1,
+                    Direction::Down => sc.0 += 1,
+                    Direction::Right => sc.1 -= 1,
+                    Direction::Left => sc.1 += 1,
+                }
             }
-            Direction::Right => {
-                sc.1 += 1;
-            }
-            Direction::Left => {
-                sc.1 -= 1;
-            }
+            // Forward, but already seen
+            'X' => {}
         }
 
-        map[sc.0][sc.1];
+        //Next step
+        match direction {
+            Direction::Up => sc.0 += 1,
+            Direction::Down => sc.0 -= 1,
+            Direction::Right => sc.1 += 1,
+            Direction::Left => sc.1 -= 1,
+        }
 
         break 'outer;
     }
