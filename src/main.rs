@@ -22,13 +22,16 @@ fn main() {
         let r = days::day5::get_res(path);
         println!("{:?}", r);
 
+        let path = "src/inputs/i6";
+        let r = days::day6::get_res(path);
+        println!("{:?}", r);
 
-    let path = "src/inputs/i6";
-    let r = days::day6::get_res(path);
-    println!("{:?}", r);
+        let path = "src/inputs/i7";
+        let r = days::day7::get_res(path);
+        println!("{:?}", r);
     */
 
-    let path = "src/inputs/i7";
-    let r = days::day7::get_res(path);
+    let path = "src/inputs/i8";
+    let r = days::day8::get_res(path);
     println!("{:?}", r);
 }
