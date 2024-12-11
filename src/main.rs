@@ -40,7 +40,7 @@ fn main() {
         println!("{:?}", r);
     */
 
-    let path = "src/inputs/t10";
+    let path = "src/inputs/i10";
     let r = days::day10::get_res(path);
     println!("{:?}", r);
 }

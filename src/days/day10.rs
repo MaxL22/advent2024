@@ -5,14 +5,10 @@ fn get_adjacent_positions(matrix: &Vec<Vec<u8>>, position: (usize, usize)) -> Ve
     let mut adjacent_positions = Vec::new();
 
     let directions = vec![
-        (0, 1),   // Right
-        (0, -1),  // Left
-        (1, 0),   // Down
-        (-1, 0),  // Up
-        (1, 1),   // Down-right diagonal
-        (-1, -1), // Up-left diagonal
-        (1, -1),  // Down-left diagonal
-        (-1, 1),  // Up-right diagonal
+        (0, 1),  // Right
+        (0, -1), // Left
+        (1, 0),  // Down
+        (-1, 0), // Up
     ];
     for (dr, dc) in directions {
         let new_row = row.wrapping_add(dr as usize);
@@ -24,6 +20,7 @@ fn get_adjacent_positions(matrix: &Vec<Vec<u8>>, position: (usize, usize)) -> Ve
             }
         }
     }
+
     adjacent_positions
 }
 
@@ -43,15 +40,45 @@ pub fn get_res(path: &str) -> (i32, i32) {
 
     for i in 0..map.len() {
         for j in 0..map[i].len() {
+            // Skips it if not 0
+            if map[i][j] != 0 {
+                continue;
+            }
+            let mut mcopy = map.clone();
             let mut q: Vec<(usize, usize)> = Vec::new();
+
             q.push((i, j));
             while !q.is_empty() {
                 let pos = q.remove(0);
-                if map[pos.0][pos.1] == 9 {
+                if mcopy[pos.0][pos.1] == 9 {
                     count.0 += 1;
+                    mcopy[pos.0][pos.1] = 200;
                     continue;
                 }
-                q.append(&mut get_adjacent_positions(&map, pos));
+
+                let adj = get_adjacent_positions(&map, pos);
+
+                for el in adj {
+                    if q.contains(&el) {
+                        continue;
+                    }
+                    q.push(el);
+                }
+            }
+
+            // P2
+            let mcopy = map.clone();
+            let mut q: Vec<(usize, usize)> = Vec::new();
+
+            q.push((i, j));
+            while !q.is_empty() {
+                let pos = q.remove(0);
+                if mcopy[pos.0][pos.1] == 9 {
+                    count.1 += 1;
+                    continue;
+                }
+
+                q.append(&mut get_adjacent_positions(&mcopy, pos));
             }
         }
     }
