@@ -33,10 +33,14 @@ fn main() {
         let path = "src/inputs/i8";
         let r = days::day8::get_res(path);
         println!("{:?}", r);
+
+        // TODO Part 2 NOT WORKING
+        let path = "src/inputs/i9";
+        let r = days::day9::get_res(path);
+        println!("{:?}", r);
     */
 
-    // TODO Part 2 NOT WORKING
-    let path = "src/inputs/i9";
-    let r = days::day9::get_res(path);
+    let path = "src/inputs/t10";
+    let r = days::day10::get_res(path);
     println!("{:?}", r);
 }
