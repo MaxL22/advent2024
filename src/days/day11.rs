@@ -114,7 +114,7 @@ pub fn get_res(path: &str) -> (i32, u128) {
 
     let mut stone_count: HashMap<i64, u128> = to_counter(s);
 
-    for _ in 0..75 {
+    for _ in 0..208 {
         stone_count = count_blink(stone_count);
     }
 
