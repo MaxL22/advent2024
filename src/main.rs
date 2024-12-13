@@ -47,9 +47,13 @@ fn main() {
     let r = days::day11::get_res(path);
     println!("{:?}", r);
 
+    // TODO Missing P2
+    let path = "src/inputs/t12";
+    let r = days::day12::get_res(path);
+    println!("{:?}", r);
     */
 
-    let path = "src/inputs/i12";
-    let r = days::day12::get_res(path);
+    let path = "src/inputs/i13";
+    let r = days::day13::get_res(path);
     println!("{:?}", r);
 }
