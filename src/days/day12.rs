@@ -1,19 +1,5 @@
 use std::collections::{HashMap, HashSet};
 
-#[derive(PartialEq, Eq, Hash)]
-enum Directions {
-    North,
-    South,
-    East,
-    West,
-}
-const DIRS: [Directions; 4] = [
-    Directions::North,
-    Directions::South,
-    Directions::East,
-    Directions::West,
-];
-
 struct Map {
     data: Vec<Vec<char>>,
     height: usize,
@@ -74,57 +60,92 @@ impl Map {
         count
     }
 
-    fn faces(&self, c: &(usize, usize), dir: &Directions) -> bool {
-        let result: bool;
+    // Misses a case, e.g., (3,3) of the test, other side is in region and is not counted as angle
+    fn corners(&self, position: &(isize, isize), region: &Vec<(usize, usize)>) -> i32 {
+        let mut c = 0;
 
-        match dir {
-            Directions::North => {
-                if self.is_within_bounds(c.0 as isize - 1, c.1 as isize) {
-                    if self.data[c.0][c.1] == self.data[c.0 - 1][c.1] {
-                        result = true;
-                    } else {
-                        result = false;
-                    }
-                } else {
-                    result = true;
-                }
+        let v1 = vec![(1, 0), (0, 1), (1, 1)];
+        let v2 = vec![(1, 0), (0, -1), (1, -1)];
+
+        let mut count = (0, 0);
+        for val in v1 {
+            let np = (position.0 + val.0, position.1 + val.1);
+            let np2 = (position.0 - val.0, position.1 - val.1);
+
+            if !self.is_within_bounds(np.0, np.1)
+                || !region.contains(&(np.0 as usize, np.1 as usize))
+            {
+                count.0 += 1;
             }
-            Directions::South => {
-                if self.is_within_bounds((c.0 + 1) as isize, (c.1) as isize) {
-                    if self.data[c.0][c.1] == self.data[c.0 + 1][c.1] {
-                        result = true;
-                    } else {
-                        result = false;
-                    }
-                } else {
-                    result = true;
-                }
-            }
-            Directions::East => {
-                if self.is_within_bounds((c.0) as isize, c.1 as isize - 1) {
-                    if self.data[c.0][c.1] == self.data[c.0][c.1 - 1] {
-                        result = true;
-                    } else {
-                        result = false;
-                    }
-                } else {
-                    result = true;
-                }
-            }
-            Directions::West => {
-                if self.is_within_bounds((c.0) as isize, (c.1 + 1) as isize) {
-                    if self.data[c.0][c.1] == self.data[c.0][c.1 + 1] {
-                        result = true;
-                    } else {
-                        result = false;
-                    }
-                } else {
-                    result = true;
-                }
+            if !self.is_within_bounds(np2.0, np2.1)
+                || !region.contains(&(np2.0 as usize, np2.1 as usize))
+            {
+                count.1 += 1;
             }
         }
 
-        result
+        if count.0 == 3 {
+            c += 1;
+        }
+        if count.1 == 3 {
+            c += 1;
+        }
+        if count.0 == 1 {
+            if !self.is_within_bounds(position.0 + 1, position.1 + 1)
+                || !region.contains(&(position.0 as usize + 1, position.1 as usize + 1))
+            {
+                c += 1;
+            }
+        }
+        if count.1 == 1 {
+            if !self.is_within_bounds(position.0 - 1, position.1 - 1)
+                || !region.contains(&(position.0 as usize - 1, position.1 as usize - 1))
+            {
+                c += 1;
+            }
+        }
+
+        let mut count = (0, 0);
+        for val in v2 {
+            let np = (position.0 + val.0, position.1 + val.1);
+            let np2 = (position.0 - val.0, position.1 - val.1);
+
+            if !self.is_within_bounds(np.0, np.1)
+                || !region.contains(&(np.0 as usize, np.1 as usize))
+            {
+                count.0 += 1;
+            }
+            if !self.is_within_bounds(np2.0, np2.1)
+                || !region.contains(&(np2.0 as usize, np2.1 as usize))
+            {
+                count.1 += 1;
+            }
+        }
+
+        if count.0 == 3 {
+            c += 1;
+        }
+        if count.1 == 3 {
+            c += 1;
+        }
+        if count.0 == 1 {
+            if !self.is_within_bounds(position.0 + 1, position.1 - 1)
+                || !region.contains(&(position.0 as usize + 1, position.1 as usize - 1))
+            {
+                c += 1;
+            }
+        }
+        if count.1 == 1 {
+            if !self.is_within_bounds(position.0 - 1, position.1 + 1)
+                || !region.contains(&(position.0 as usize - 1, position.1 as usize + 1))
+            {
+                c += 1;
+            }
+        }
+
+        println!("{:?}, {:?}", position, c);
+
+        c
     }
 }
 
@@ -192,55 +213,19 @@ pub fn get_res(path: &str) -> (i32, i32) {
     }
 
     // Part 2
-    //  For each region, find the cells facing each direction
-    //  Count the sides, i.e., collapse cells having the same x (north, south) or y (east, west)
-
-    // Doesn't work, not even conceptually
+    // Count the corners, check if each cell is a corner
 
     // For each region
     for region in borders.values() {
-        let mut cells_facing: HashMap<Directions, Vec<(usize, usize)>> = HashMap::new();
-        for el in DIRS {
-            cells_facing.insert(el, Vec::new());
-        }
-
-        // For each cell
+        // For each region
+        let mut corners = 0;
         for cell in region.iter() {
-            // Check if it faces each direction
-            for dir in DIRS {
-                if m.faces(&cell, &dir) {
-                    // Add it to that direction if it does
-                    cells_facing.get_mut(&dir).unwrap().push(*cell);
-                }
-            }
+            corners += m.corners(&(cell.0 as isize, cell.1 as isize), &region);
         }
-
-        let mut bn = 0;
-        for dir in &[Directions::North, Directions::South] {
-            let mut sides: HashSet<usize> = HashSet::new();
-
-            for val in cells_facing.get(&dir).unwrap() {
-                if !sides.contains(&val.0) {
-                    sides.insert(val.0);
-                }
-            }
-
-            bn += sides.len();
-        }
-
-        for dir in &[Directions::East, Directions::West] {
-            let mut sides: HashSet<usize> = HashSet::new();
-            for val in cells_facing.get(&dir).unwrap() {
-                if !sides.contains(&val.1) {
-                    sides.insert(val.1);
-                }
-            }
-
-            bn += sides.len();
-        }
-
-        count.1 += (bn * region.len()) as i32;
+        println!("{corners}");
+        count.1 += corners * region.len() as i32;
     }
 
     count
 }
+// 928092 too low
