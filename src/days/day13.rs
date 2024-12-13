@@ -126,4 +126,4 @@ pub fn get_res(path: &str) -> (f64, f64) {
     count
 }
 // 32026, I just needed to keep the floats? Wtf
-// 76412569284706 too low?
+// 76412569284706 too low? Solution should be 89013607072065
