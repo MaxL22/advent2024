@@ -1,3 +1,5 @@
+use std::io;
+
 const MAP_LEN: i32 = 103;
 const MAP_WIDTH: i32 = 101;
 const NUM_ITER: usize = 100;
@@ -37,9 +39,37 @@ impl Bot {
     }
 }
 
-fn big_pp(bots: &Vec<Bot>) {
-    for el in bots {
-        println!("{:?}", el);
+fn quad_count(bots: &Vec<Bot>) -> (i32, i32, i32, i32) {
+    let mut quadrants = (0, 0, 0, 0);
+
+    for el in bots.iter() {
+        if el.pos.0 < MAP_WIDTH as usize / 2 {
+            if el.pos.1 < MAP_LEN as usize / 2 {
+                quadrants.0 += 1;
+            } else if el.pos.1 > MAP_LEN as usize / 2 {
+                quadrants.2 += 1;
+            }
+        } else if el.pos.0 > MAP_WIDTH as usize / 2 {
+            if el.pos.1 < MAP_LEN as usize / 2 {
+                quadrants.1 += 1;
+            } else if el.pos.1 > MAP_LEN as usize / 2 {
+                quadrants.3 += 1;
+            }
+        }
+    }
+
+    quadrants
+}
+
+fn print_map(bots: &Vec<Bot>) {
+    let mut map = [[" "; MAP_WIDTH as usize]; MAP_LEN as usize];
+
+    for b in bots.iter() {
+        map[b.pos.1][b.pos.0] = "X";
+    }
+
+    for line in map.iter() {
+        println!("{:?}", line);
     }
 }
 
@@ -64,7 +94,6 @@ pub fn get_res(path: &str) -> (i32, i32) {
             ),
         ));
     }
-    big_pp(&bots);
 
     // Part 1
     for _ in 0..NUM_ITER {
@@ -72,30 +101,36 @@ pub fn get_res(path: &str) -> (i32, i32) {
             el.update_pos();
         }
     }
-    println!("");
-    big_pp(&bots);
 
-    println!("{} {}", MAP_LEN / 2, MAP_WIDTH / 2);
+    let quadrants = quad_count(&bots);
 
-    let mut quadrants = (0, 0, 0, 0);
+    count.0 = quadrants.0 * quadrants.1 * quadrants.2 * quadrants.3;
 
-    for el in bots.iter() {
-        if el.pos.0 < MAP_WIDTH as usize / 2 {
-            if el.pos.1 < MAP_LEN as usize / 2 {
-                quadrants.0 += 1;
-            } else if el.pos.1 > MAP_LEN as usize / 2 {
-                quadrants.2 += 1;
-            }
-        } else if el.pos.0 > MAP_WIDTH as usize / 2 {
-            if el.pos.1 < MAP_LEN as usize / 2 {
-                quadrants.1 += 1;
-            } else if el.pos.1 > MAP_LEN as usize / 2 {
-                quadrants.3 += 1;
+    // Check part 2
+    let mut i = 1;
+    loop {
+        for el in bots.iter_mut() {
+            el.update_pos();
+        }
+
+        let q = quad_count(&bots);
+
+        println!("iter num {i}");
+        i += 1;
+
+        if q.0 < 100 {
+            let mut buffer = String::new();
+            print_map(&bots);
+
+            io::stdin()
+                .read_line(&mut buffer)
+                .expect("Failed to read line");
+
+            if buffer == "D" {
+                break;
             }
         }
     }
-
-    count.0 = quadrants.0 * quadrants.1 * quadrants.2 * quadrants.3;
 
     count
 }
