@@ -2,7 +2,7 @@ mod days;
 
 fn main() {
     /*
-                let path = "src/inputs/i1";
+    let path = "src/inputs/i1";
                 let r = days::day1::get_res(path);
                 println!("{:?}", r);
 
@@ -51,21 +51,20 @@ fn main() {
                 let path = "src/inputs/t12";
                 let r = days::day12::get_res(path);
                 println!("{:?}", r);
-
-    let path = "src/inputs/i13";
-                let r = days::day13::get_res(path);
+            let path = "src/inputs/i13";
+    let r = days::day13::get_res(path);
                 println!("{:?}", r);
 
     let path = "src/inputs/i14";
-        //let r = days::day14::get_res(path);
-        //println!("{:?}", r);
+    //let r = days::day14::get_res(path);
+    //println!("{:?}", r);
 
-        let path = ("src/inputs/t15.1", "src/inputs/t15.2");
+    let path = ("src/inputs/t15.1", "src/inputs/t15.2");
     let r = days::day15::get_res(path);
-        println!("{:?}", r);
+    println!("{:?}", r);
     */
 
-    let path = "src/inputs/t18";
+    let path = "src/inputs/i18";
     let r = days::day18::get_res(path);
     println!("{:?}", r);
 }
