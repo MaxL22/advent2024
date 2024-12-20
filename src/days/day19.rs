@@ -1,36 +1,53 @@
-fn build_series(to_create: &str, pieces: &Vec<String>) -> bool {
-    let mut i = 0;
+// On full input loops infinitely, works on test
 
-    for p in pieces.iter() {
-        if to_create[i..].starts_with(p) {
-            // Termination
-            if p.len() + i == to_create.len() {
-                return true;
-            }
-
-            i += p.len();
-        }
-    }
-
+fn build_series(to_create: &str, pieces: &Vec<String>) -> i32 {
     let mut indexes: Vec<usize> = Vec::new();
-    let mut last_index = 0;
+    let mut d_len = 0;
+    let mut count = 0;
     indexes.push(0);
 
+    // Iterates through all possible pieces
+    // When if finds one that fits it tries to complete the word
+    // Otherwise it backtracks one and tries again
     loop {
-        // Found a possible piece
-        // Add slice param
-        if to_create[..].starts_with(&pieces[indexes[last_index]]) {
-            indexes.push(0);
-            last_index += 1;
+        let last_index = indexes.len() - 1;
+
+        println!("{:?}", indexes);
+
+        // Backtracking
+        // If it hasn't found any piece for the current string
+        if indexes[last_index] == pieces.len() {
+            indexes.pop(); // Remove last element
+
+            // It's over man, no can do
+            if indexes.is_empty() {
+                break;
+            }
+            d_len -= pieces[indexes[last_index - 1]].len(); // Go back to searching with the last element
+            indexes[last_index - 1] += 1;
+            continue;
         }
-        //Termination condition
 
-        //Backtracking
+        // Found a possible piece
+        if to_create[d_len..].starts_with(&pieces[indexes[last_index]]) {
+            indexes.push(0);
+            d_len += pieces[indexes[last_index]].len();
+        } else {
+            indexes[last_index] += 1;
+        }
 
-        break;
+        //Count condition
+        if d_len == to_create.len() {
+            count += 1;
+
+            d_len -= pieces[indexes[last_index]].len();
+            indexes.pop();
+
+            indexes[last_index] += 1;
+        }
     }
 
-    false
+    count
 }
 
 fn get_relevant_patterns(search: &str, values: &Vec<String>) -> Vec<String> {
@@ -59,8 +76,9 @@ pub fn get_res(path: (&str, &str)) -> (i32, i32) {
         // Waaaaaaay too slow, recursion is not the way
         let buildable = build_series(&v[..], &patterns);
 
-        if buildable {
+        if buildable != 0 {
             count.0 += 1;
+            count.1 += buildable;
         }
     }
 
