@@ -1,18 +1,36 @@
 fn build_series(to_create: &str, pieces: &Vec<String>) -> bool {
-    let mut built = false;
+    let mut i = 0;
 
     for p in pieces.iter() {
-        if to_create.starts_with(p) {
+        if to_create[i..].starts_with(p) {
             // Termination
-            if to_create.len() - p.len() == 0 {
+            if p.len() + i == to_create.len() {
                 return true;
             }
 
-            built = build_series(&to_create[p.len()..], pieces);
+            i += p.len();
         }
     }
 
-    built
+    let mut indexes: Vec<usize> = Vec::new();
+    let mut last_index = 0;
+    indexes.push(0);
+
+    loop {
+        // Found a possible piece
+        // Add slice param
+        if to_create[..].starts_with(&pieces[indexes[last_index]]) {
+            indexes.push(0);
+            last_index += 1;
+        }
+        //Termination condition
+
+        //Backtracking
+
+        break;
+    }
+
+    false
 }
 
 fn get_relevant_patterns(search: &str, values: &Vec<String>) -> Vec<String> {
